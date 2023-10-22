@@ -1,6 +1,7 @@
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -8,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -52,8 +54,14 @@ public class Client1 {
     //Instead of using random number, use time as boundary also can ensure uniqueness
     String boundary = Long.toHexString(System.currentTimeMillis());
 
-    String content = "abc";
-    byte[] imageBytes = content.getBytes(StandardCharsets.UTF_8);
+    //String content = "abc";
+
+    String basePath = new File("").getAbsolutePath();
+    String fileName = "nmtb.png";
+    String imagePath = basePath + '/' + fileName;
+
+
+    //byte[] imageBytes = content.getBytes(StandardCharsets.UTF_8);
 
     try {
       URL url = new URL(serverUrl);
@@ -69,8 +77,13 @@ public class Client1 {
       writer.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"").append(CRLF);
       writer.append("Content-Type: image/jpeg").append(CRLF);
       writer.append(CRLF).flush();
+
+      File file = new File(imagePath);
+
+      byte[] imageBytes = Files.readAllBytes(file.toPath());
       outputStream.write(imageBytes);
       outputStream.flush();
+
       writer.append(CRLF).flush();
       writer.append("--" + boundary).append(CRLF);
       writer.append("Content-Disposition: form-data; name=\"profile\"").append(CRLF);
